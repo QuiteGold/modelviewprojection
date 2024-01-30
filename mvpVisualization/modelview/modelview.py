@@ -58,7 +58,7 @@ glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 2)
 glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 0)
 
 window = glfw.create_window(
-    800, 800, "ModelViewProjection Demo of Coordinates", None, None
+    1920, 1080, "ModelViewProjection Demo of Coordinates", None, None
 )
 if not window:
     glfw.terminate()
@@ -88,7 +88,7 @@ def scroll_callback(window, xoffset, yoffset):
 glfw.set_scroll_callback(window, scroll_callback)
 
 
-glClearColor(0.0, 0.0, 0.0, 1.0)
+glClearColor(0.0, 18.4 / 255.0, 2.0 / 255.0, 1.0)
 
 # NEW - TODO - talk about opengl matricies and z pos/neg
 glEnable(GL_DEPTH_TEST)

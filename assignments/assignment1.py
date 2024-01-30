@@ -24,6 +24,8 @@ from OpenGL.GL import (
 )
 import glfw
 import numpy as np
+from collections.abc import Callable
+
 
 if not glfw.init():
     sys.exit()
@@ -85,17 +87,7 @@ def draw_in_square_viewport() -> None:
 program_start_time = glfw.get_time()
 
 
-while not glfw.window_should_close(window):
-    glfw.poll_events()
-
-    elapsed_time_in_seconds = glfw.get_time() - program_start_time
-
-    width, height = glfw.get_framebuffer_size(window)
-    glViewport(0, 0, width, height)
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-    draw_in_square_viewport()
-
+def draw_a_triangle() -> None:
     glColor3f(0.578123, 0.0, 1.0)
     glBegin(GL_QUADS)
     glVertex2f(-1.0, -0.3)
@@ -104,20 +96,8 @@ while not glfw.window_should_close(window):
     glVertex2f(-1.0, 0.3)
     glEnd()
 
-    # math.sin uses radians
-    offset_x = math.sin(elapsed_time_in_seconds)
-    # to use degrees, you would do
-    # offset_x = math.sin(math.radians(elapsed_time_in_seconds))
 
-    float_between_0_and_1 = abs(math.sin(elapsed_time_in_seconds))
-    # a float between 0 and 1 so that the color of the triagle changes over time
-    glColor3f(float_between_0_and_1, float_between_0_and_1, 1.0)
-    glBegin(GL_TRIANGLES)
-    glVertex2f(0.0 + offset_x, 0.0)
-    glVertex2f(0.5 + offset_x, 0.0)
-    glVertex2f(0.0 + offset_x, 0.5)
-    glEnd()
-
+def draw_x_squared_with_precomputed_values() -> None:
     # f(x) = x^2
 
     glColor3f(1.0, 1.0, 1.0)
@@ -184,37 +164,97 @@ while not glfw.window_should_close(window):
 
     glEnd()
 
-    # generic plot function
-    def plot(fn, domain, interval):
-        glBegin(GL_LINES)
-        glVertex2f(domain[0], fn(domain[0]))
 
-        # >>> range(0,10)
-        # range(0, 10)
-        # >>> list(range(0,10))
-        # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        # >>> list(range(0,10,2))
-        # [0, 2, 4, 6, 8]
-        # >>> np.arange(0.0,1.0,0.2)
-        # array([0. , 0.2, 0.4, 0.6, 0.8])
-        for x in np.arange(domain[0], domain[1], interval):
-            # glVertex is here twice because line segments are assumed to be in pairs
-            glVertex2f(x, fn(x))
-            glVertex2f(x, fn(x))
-        glEnd()
+# generic plot function
+def plot(
+    fn: Callable[[float], float], domain: tuple[float, float], interval: float
+) -> None:
+    glBegin(GL_LINES)
+    glVertex2f(domain[0], fn(domain[0]))
 
-    def x_minus_onehalf_squared(x):
+    # >>> range(0,10)
+    # range(0, 10)
+    # >>> list(range(0,10))
+    # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    # >>> list(range(0,10,2))
+    # [0, 2, 4, 6, 8]
+    # >>> np.arange(0.0,1.0,0.2)
+    # array([0. , 0.2, 0.4, 0.6, 0.8])
+    for x in np.arange(domain[0], domain[1], interval):
+        # glVertex is here twice because line segments are assumed to be in pairs
+        glVertex2f(x, fn(x))
+        glVertex2f(x, fn(x))
+    glEnd()
+
+
+def use_plot_function_for_x_minus_onehalf_squared() -> None:
+    def x_minus_onehalf_squared(x) -> float:
         return (x - 0.5) ** 2
 
     glColor3f(1.0, 0.0, 0.0)
     plot(fn=x_minus_onehalf_squared, domain=(-1, 1), interval=0.001)
 
+
+def draw_an_oscillating_triangle(elapsed_time_in_seconds: float) -> None:
+    # math.sin uses radians
+    offset_x = math.sin(elapsed_time_in_seconds)
+    # to use degrees, you would do
+    # offset_x = math.sin(math.radians(elapsed_time_in_seconds))
+
+    float_between_0_and_1 = abs(math.sin(elapsed_time_in_seconds))
+    # a float between 0 and 1 so that the color of the triagle changes over time
+    glColor3f(float_between_0_and_1, float_between_0_and_1, 1.0)
+    glBegin(GL_TRIANGLES)
+    glVertex2f(0.0 + offset_x, 0.0)
+    glVertex2f(0.5 + offset_x, 0.0)
+    glVertex2f(0.0 + offset_x, 0.5)
+    glEnd()
+
+
+def use_plot_function_with_unnamed_function(elapsed_time_in_seconds: float) -> None:
     glColor3f(1.0, 0.0, 1.0)
     plot(
         fn=lambda x: math.cos(x + elapsed_time_in_seconds * 3.0),
         domain=(-1, 1),
         interval=0.01,
     )
+
+
+def draw_circle() -> None:
+    glBegin(GL_TRIANGLES)
+
+    theta_increment: float = 0.01
+
+    glColor3f(1.0, 1.0, 1.0)
+
+    scale_radius: float = 0.1
+
+    for theta in np.arange(0.0, 2 * math.pi, theta_increment):
+        glVertex2f(0.0, 0.0)
+        glVertex2f(scale_radius * math.cos(theta), scale_radius * math.sin(theta))
+        glVertex2f(
+            scale_radius * math.cos(theta + theta_increment),
+            scale_radius * math.sin(theta + theta_increment),
+        )
+    glEnd()
+
+
+while not glfw.window_should_close(window):
+    glfw.poll_events()
+
+    elapsed_time_in_seconds: float = glfw.get_time() - program_start_time
+
+    width, height = glfw.get_framebuffer_size(window)
+    glViewport(0, 0, width, height)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+    draw_in_square_viewport()
+    draw_a_triangle()
+    draw_an_oscillating_triangle(elapsed_time_in_seconds)
+    draw_x_squared_with_precomputed_values()
+    use_plot_function_for_x_minus_onehalf_squared()
+    use_plot_function_with_unnamed_function(elapsed_time_in_seconds)
+    draw_circle()
 
     glfw.swap_buffers(window)
 

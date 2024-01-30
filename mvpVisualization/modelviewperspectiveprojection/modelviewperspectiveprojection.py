@@ -56,7 +56,6 @@ from OpenGL.GL import (
     glDeleteProgram,
     glDeleteVertexArrays,
     glDepthFunc,
-    glDisable,
     glDrawArrays,
     glEnable,
     glEnableVertexAttribArray,
@@ -95,7 +94,7 @@ glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL_TRUE)
 
 
 window = glfw.create_window(
-    800, 800, "ModelViewProjection Demo of Coordinates", None, None
+    1920, 1080, "ModelViewProjection Demo of Coordinates", None, None
 )
 if not window:
     glfw.terminate()
@@ -129,7 +128,7 @@ def scroll_callback(window, xoffset, yoffset):
 glfw.set_scroll_callback(window, scroll_callback)
 
 
-glClearColor(0.0, 0.0, 0.0, 1.0)
+glClearColor(0.0, 18.4 / 255.0, 2.0 / 255.0, 1.0)
 
 # NEW - TODO - talk about opengl matricies and z pos/neg
 glClearDepth(1.0)
@@ -581,7 +580,6 @@ class Axis:
         glDeleteProgram(self.shader)
 
     def render(self, time: float, grayed_out: bool = False) -> None:
-        glDisable(GL_DEPTH_TEST)
         glUseProgram(self.shader)
         glBindVertexArray(self.vao)
 
@@ -722,7 +720,6 @@ class Axis:
             glUniform2f(self.viewportLoc, width, height)
             glDrawArrays(GL_LINES, 0, self.numberOfVertices)
             glBindVertexArray(0)
-        glEnable(GL_DEPTH_TEST)
 
 
 axis = Axis()
@@ -1204,6 +1201,8 @@ while not glfw.window_should_close(window):
             imgui.end_menu()
         imgui.end_main_menu_bar()
 
+    imgui.set_next_window_size(453, 564, imgui.FIRST_USE_EVER)
+    imgui.set_next_window_position(15, 30, imgui.FIRST_USE_EVER)
     imgui.set_next_window_bg_alpha(0.05)
     imgui.begin("Time", True)
 
@@ -1348,19 +1347,8 @@ while not glfw.window_should_close(window):
 
     imgui.end()
 
-    imgui.set_next_window_bg_alpha(0.05)
-    imgui.begin("Display Options", True)
-
-    clicked_enlarged_axises, enlarged_axis = imgui.checkbox(
-        "Enlarged Axises", enlarged_axis
-    )
-
-    clicked_show_ground_axises, show_ground_axis = imgui.checkbox(
-        "Show Ground Axises", show_ground_axis
-    )
-
-    imgui.end()
-
+    imgui.set_next_window_size(460, 347, imgui.FIRST_USE_EVER)
+    imgui.set_next_window_position(1042, 26, imgui.FIRST_USE_EVER)
     imgui.set_next_window_bg_alpha(0.05)
     imgui.begin("Camera Options", True)
 
@@ -1439,6 +1427,21 @@ while not glfw.window_should_close(window):
 
     if clicked_virtual_camera_far_z:
         frustum.prepare_to_render()
+
+    imgui.end()
+
+    imgui.set_next_window_size(300, 175, imgui.FIRST_USE_EVER)
+    imgui.set_next_window_position(8, 603, imgui.FIRST_USE_EVER)
+    imgui.set_next_window_bg_alpha(0.05)
+    imgui.begin("Display Options", True)
+
+    clicked_enlarged_axises, enlarged_axis = imgui.checkbox(
+        "Enlarged Axises", enlarged_axis
+    )
+
+    clicked_show_ground_axises, show_ground_axis = imgui.checkbox(
+        "Show Ground Axises", show_ground_axis
+    )
 
     imgui.end()
 

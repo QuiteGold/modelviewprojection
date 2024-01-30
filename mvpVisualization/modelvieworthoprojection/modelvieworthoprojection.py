@@ -55,7 +55,6 @@ from OpenGL.GL import (
     glDeleteProgram,
     glDeleteVertexArrays,
     glDepthFunc,
-    glDisable,
     glDrawArrays,
     glEnable,
     glEnableVertexAttribArray,
@@ -91,7 +90,7 @@ glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL_TRUE)
 
 
 window = glfw.create_window(
-    800, 800, "ModelViewProjection Demo of Coordinates", None, None
+    1920, 1080, "ModelViewProjection Demo of Coordinates", None, None
 )
 if not window:
     glfw.terminate()
@@ -126,7 +125,7 @@ def scroll_callback(window, xoffset, yoffset):
 glfw.set_scroll_callback(window, scroll_callback)
 
 
-glClearColor(0.0, 0.0, 0.0, 1.0)
+glClearColor(0.0, 18.4 / 255.0, 2.0 / 255.0, 1.0)
 
 # NEW - TODO - talk about opengl matricies and z pos/neg
 glClearDepth(1.0)
@@ -572,7 +571,6 @@ class Axis:
         glDeleteProgram(self.shader)
 
     def render(self, time: float, grayed_out: bool = False) -> None:
-        glDisable(GL_DEPTH_TEST)
         glUseProgram(self.shader)
         glBindVertexArray(self.vao)
 
@@ -704,7 +702,6 @@ class Axis:
             )
             glDrawArrays(GL_LINES, 0, self.numberOfVertices)
             glBindVertexArray(0)
-        glEnable(GL_DEPTH_TEST)
 
 
 axis = Axis()
